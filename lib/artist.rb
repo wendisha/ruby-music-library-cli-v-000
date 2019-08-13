@@ -1,46 +1,44 @@
-require "pry"
-class Artist
+class Artist 
+  attr_accessor :name, :songs, :genre
   extend Concerns::Findable
-
-  attr_accessor :name
-  attr_reader :songs
   @@all = []
   
   def initialize(name)
-    @name = name 
+    @name = name
     @songs = []
-  end
+  end 
   
-  def self.all 
-    @@all 
-  end
+  def self.all
+    @@all
+  end 
   
-  def self.destroy_all 
-    @@all.clear 
-  end
+  def self.destroy_all
+    @@all.clear
+  end 
   
-  def save 
+  def save
     @@all << self
-  end
+  end 
   
-  def self.create(name) 
-    artist = self.new(name)
-    artist.save
-    artist
-  end
-  
-  def songs 
-    @songs 
-  end
-  
-  def add_song(song)
-    if song.artist == nil
-      song.artist = self
+  def self.create(name)
+    self.new(name).tap do |song|
+      song.save
     end
+  end 
+  
+  #add_song
+  # assigns the current artist to the song's 'artist' property (song belongs to artist)
+  # does not assign the artist if the song already has an artist
+  # adds the song to the current artist's 'songs' collection
+  # does not add the song to the current artist's collection of songs if it already exists therein
+  def add_song(song)
+    song.artist = self unless song.artist == self
     @songs << song unless @songs.include?(song)
   end
   
   def genres 
-    songs.collect {|song| song.genre}.uniq
-  end
-end
+    self.songs.map { |song| song.genre }.uniq
+  end 
+  
+  @artists
+end 
